@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Total Criminals</h5>
+                <h2 class="card-text">{{ criminals|length }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Reported Crimes</h5>
+                <h2 class="card-text">{{ crime_reports|length }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h3>Recent Criminal Records</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>County</th>
+                                <th>Crimes</th>
+                                <th>Arrest Date</th>
+                                <th>Prison</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for criminal in criminals %}
+                            <tr>
+                                <td>{{ criminal.full_names }}</td>
+                                <td>{{ criminal.county }}</td>
+                                <td>{{ criminal.crimes_committed }}</td>
+                                <td>{{ criminal.arrest_date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ criminal.prison }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3>Recent Crime Reports</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Location</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in crime_reports %}
+                            <tr>
+                                <td>{{ report.description }}</td>
+                                <td>{{ report.location }}</td>
+                                <td>{{ report.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>{{ report.status }}</td>
+                                <td>
+                                    <select class="form-select status-select" data-report-id="{{ report.id }}">
+                                        <option value="pending" {% if report.status == 'pending' %}selected{% endif %}>Pending</option>
+                                        <option value="investigating" {% if report.status == 'investigating' %}selected{% endif %}>Investigating</option>
+                                        <option value="resolved" {% if report.status == 'resolved' %}selected{% endif %}>Resolved</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

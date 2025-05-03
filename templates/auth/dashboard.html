@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h2>Welcome, {{ current_user.username }}</h2>
+                    <p class="text-muted">Role: {{ current_user.role.capitalize() }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Role-specific Dashboard Content -->
+    {% if current_user.role == 'admin' %}
+    <!-- Admin Dashboard -->
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Criminals</h5>
+                    <h2 class="card-text">{{ stats.total_criminals }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Active Cases</h5>
+                    <h2 class="card-text">{{ stats.active_cases }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Police Officers</h5>
+                    <h2 class="card-text">{{ stats.total_police }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Crime Reports</h5>
+                    <h2 class="card-text">{{ stats.crime_reports }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% elif current_user.role == 'police' %}
+    <!-- Police Dashboard -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Quick Actions</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="{{ url_for('add_criminal') }}" class="btn btn-primary">Register New Criminal</a>
+                        <a href="{{ url_for('search_criminal') }}" class="btn btn-info">Search Criminal Records</a>
+                        <a href="{{ url_for('view_reports') }}" class="btn btn-warning">View Crime Reports</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Recent Activities</h4>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for activity in recent_activities %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ activity.action }}</h6>
+                                <small>{{ activity.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                            </div>
+                            <p class="mb-1">{{ activity.description }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Regular User Dashboard -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Quick Actions</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="{{ url_for('search_criminal') }}" class="btn btn-primary">Search Criminal Records</a>
+                        <a href="{{ url_for('report_crime') }}" class="btn btn-danger">Report a Crime</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Your Crime Reports</h4>
+                </div>
+                <div class="card-body">
+                    {% if user_reports %}
+                    <div class="list-group">
+                        {% for report in user_reports %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Report #{{ report.id }}</h6>
+                                <small class="text-muted">{{ report.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                            </div>
+                            <p class="mb-1">{{ report.description }}</p>
+                            <small class="text-muted">Status: {{ report.status }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No crime reports submitted yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Common Dashboard Elements -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Recent Announcements</h4>
+                </div>
+                <div class="card-body">
+                    {% if announcements %}
+                    <div class="list-group">
+                        {% for announcement in announcements %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ announcement.title }}</h5>
+                                <small>{{ announcement.date.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            <p class="mb-1">{{ announcement.content }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No recent announcements.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

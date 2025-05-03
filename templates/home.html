@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4">Welcome to Crime Database Kenya</h1>
+            <p class="lead">A comprehensive platform for managing and tracking criminal records across Kenya</p>
+        </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="row mb-5">
+        {% if current_user.is_authenticated %}
+            {% if current_user.role == 'admin' %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Admin Dashboard</h5>
+                        <p class="card-text">Manage criminal records, users, and system settings.</p>
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">Access Dashboard</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if current_user.role in ['admin', 'police'] %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Register Criminal</h5>
+                        <p class="card-text">Add new criminal records to the database.</p>
+                        <a href="{{ url_for('add_criminal') }}" class="btn btn-warning">Add Criminal</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Search Records</h5>
+                        <p class="card-text">Search and view criminal records in the database.</p>
+                        <a href="{{ url_for('search_criminal') }}" class="btn btn-info">Search Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Report Crime</h5>
+                        <p class="card-text">Submit a report for a crime incident.</p>
+                        <a href="{{ url_for('report_crime') }}" class="btn btn-danger">Report Crime</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-md-6 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Login</h5>
+                        <p class="card-text">Access your account to use the system.</p>
+                        <a href="{{ url_for('login') }}" class="btn btn-primary">Login Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Register</h5>
+                        <p class="card-text">Create a new account to report crimes.</p>
+                        <a href="{{ url_for('register') }}" class="btn btn-success">Register Now</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Information Section -->
+    <div class="row mb-5">
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">About the System</h5>
+                    <p class="card-text">
+                        The Crime Database Kenya is a centralized system for managing criminal records 
+                        and facilitating crime reporting across Kenya. This platform helps law enforcement 
+                        agencies maintain accurate records and enables citizens to report crimes efficiently.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Emergency Contacts</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>Police Emergency:</strong> 999 or 112</li>
+                        <li><strong>Crime Reporting Hotline:</strong> 0800 722 203</li>
+                        <li><strong>Gender Violence Hotline:</strong> 1195</li>
+                        <li><strong>Child Helpline:</strong> 116</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Section (if user is authenticated) -->
+    {% if current_user.is_authenticated %}
+    <div class="row">
+        <div class="col-12">
+            <h3 class="text-center mb-4">System Statistics</h3>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total Records</h5>
+                    <h2>{{ stats.total_records if stats else 0 }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Active Cases</h5>
+                    <h2>{{ stats.active_cases if stats else 0 }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Resolved Cases</h5>
+                    <h2>{{ stats.resolved_cases if stats else 0 }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Recent Reports</h5>
+                    <h2>{{ stats.recent_reports if stats else 0 }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

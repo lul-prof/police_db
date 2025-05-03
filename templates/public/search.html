@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h3>Search Criminal Records</h3>
+    </div>
+    <div class="card-body">
+        <form method="GET" class="mb-4">
+            <div class="input-group">
+                <input type="text" class="form-control" name="query" placeholder="Enter name or county..." value="{{ request.args.get('query', '') }}">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+
+        {% if criminals %}
+        <div class="row">
+            {% for criminal in criminals %}
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    {% if criminal.mugshot %}
+                    <img src="{{ url_for('static', filename='images/' + criminal.mugshot) }}" class="card-img-top" alt="Mugshot">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ criminal.full_names }}</h5>
+                        <p class="card-text">
+                            <strong>County:</strong> {{ criminal.county }}<br>
+                            <strong>Arrest Date:</strong> {{ criminal.arrest_date.strftime('%Y-%m-%d') }}<br>
+                            <strong>Prison:</strong> {{ criminal.prison }}<br>
+                            <strong>Expected Release:</strong> {{ criminal.expected_release_date.strftime('%Y-%m-%d') }}<br>
+                            <strong>Crimes:</strong> {{ criminal.crimes_committed }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-center">No results found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
